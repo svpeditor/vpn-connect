@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Saratov VPN - подключение в Happ</title>
+<style>
+:root{--o:#FF8200}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+background:#0a0a0a;color:#eee;font-family:ui-monospace,Menlo,Consolas,monospace;padding:24px}
+.card{max-width:420px;width:100%;text-align:center}
+h1{color:var(--o);font-size:22px;letter-spacing:2px;margin:0 0 10px}
+p{color:#aaa;font-size:14px;line-height:1.5;margin:8px 0}
+a.btn{display:none;margin:18px 0 10px;padding:14px;background:var(--o);color:#000;
+text-decoration:none;font-weight:700;border-radius:10px;font-size:16px}
+.hint{font-size:12px;color:#777}
+#raw{display:none;word-break:break-all;font-size:11px;color:#888;background:#141414;padding:10px;border-radius:8px;margin-top:12px}
+</style></head>
+<body><div class="card">
+<h1>SARATOV VPN</h1>
+<p id="status">Открываю приложение Happ...</p>
+<a id="open" class="btn">Открыть в Happ</a>
+<p class="hint">Если не открылось - установи Happ и нажми кнопку выше.</p>
+<div id="raw"></div>
+</div>
+<script>
+(function(){
+ var sub=new URLSearchParams(location.search).get('sub');
+ var st=document.getElementById('status'),btn=document.getElementById('open'),raw=document.getElementById('raw');
+ if(!sub){st.textContent='Нет ссылки подписки.';return;}
+ function go(link){
+   if(!/^happ:\/\//.test(link)){fail();return;}
+   btn.href=link;btn.style.display='block';st.textContent='Нажми «Открыть в Happ»:';
+   location.replace(link);
+ }
+ function fail(){
+   st.textContent='Скопируй ссылку и добавь её в Happ вручную:';
+   raw.style.display='block';raw.textContent=sub;
+ }
+ fetch('https://crypto.happ.su/api-v2.php',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({url:sub})})
+  .then(function(r){return r.json()})
+  .then(function(d){if(d&&d.encrypted_link){go(d.encrypted_link);}else{fail();}})
+  .catch(fail);
+})();
+</script>
+</body></html>
