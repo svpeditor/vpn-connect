@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saratov VPN — подключение Karing</title>
+<style>
+  :root{--o:#FF8200}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0c0c0c;color:#eee;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+       min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{max-width:420px;width:100%;text-align:center}
+  h1{color:var(--o);font-size:22px;margin-bottom:6px;letter-spacing:.5px}
+  p{color:#bbb;font-size:15px;line-height:1.5;margin-bottom:18px}
+  .btn{display:block;background:var(--o);color:#111;font-weight:700;font-size:17px;
+       text-decoration:none;padding:15px;border-radius:12px;margin-bottom:12px}
+  .btn.sec{background:#1c1c1c;color:#eee;border:1px solid #333;font-weight:600}
+  .sub{word-break:break-all;background:#141414;border:1px solid #2a2a2a;border-radius:10px;
+       padding:12px;font-size:12px;color:#9a9a9a;margin-top:10px;user-select:all;-webkit-user-select:all}
+  .hint{font-size:13px;color:#8a8a8a;margin-top:14px;line-height:1.45}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>SARATOV VPN</h1>
+  <p id="msg">Открываю приложение Karing…</p>
+  <a class="btn" id="open" href="#">Открыть в Karing</a>
+  <a class="btn sec" href="https://karing.app" target="_blank" rel="noopener">Скачать Karing</a>
+  <div id="fb" style="display:none">
+    <p class="hint">Не открылось? Установите Karing, затем в приложении: настройки (сверху слева) → Add Profile → Add Profile Link и вставьте ссылку:</p>
+    <div class="sub" id="sub"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search);
+  var sub=q.get('sub')||'';
+  var msg=document.getElementById('msg');
+  var open=document.getElementById('open');
+  var fb=document.getElementById('fb');
+  var subEl=document.getElementById('sub');
+  if(!sub){ msg.textContent='Ссылка на подписку не передана. Откройте «Мои подписки» в боте.'; open.style.display='none'; return; }
+  var link='karing://install-config?url='+encodeURIComponent(sub)+'&name='+encodeURIComponent('Saratov VPN');
+  open.setAttribute('href',link);
+  subEl.textContent=sub;
+  fb.style.display='block';
+  open.addEventListener('click',function(){
+    setTimeout(function(){ msg.textContent='Если Karing не открылся — установите его и добавьте подписку по ссылке ниже.'; },800);
+  });
+  // авто-попытка открыть приложение (тап надёжнее, но пробуем и сразу)
+  try{ window.location.href=link; }catch(e){}
+})();
+</script>
+</body>
+</html>
