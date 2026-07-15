@@ -1,0 +1,60 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Atmosphera VPN</title>
+<style>
+body{background:#0a0a0a;color:#eee;font-family:-apple-system,Segoe UI,Roboto,sans-serif;
+display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0;padding:24px}
+.c{max-width:460px;width:100%;text-align:center}
+h2{color:#FF8200;margin:0 0 6px}
+p{margin:8px 0;line-height:1.5}
+.b{display:inline-block;background:#FF8200;color:#000;font-weight:700;padding:16px 32px;
+border-radius:12px;text-decoration:none;margin:16px 0;font-size:18px}
+.stores{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:12px 0}
+.stores a{flex:1;min-width:120px;background:#1c1c1c;color:#eee;border:1px solid #333;
+padding:11px 14px;border-radius:10px;text-decoration:none;font-size:14px}
+.note{color:#999;font-size:13px}
+.lbl{color:#bbb;font-size:13px;margin-top:18px}
+code{word-break:break-all;font-size:12px;color:#aaa;display:block;margin-top:6px;
+background:#151515;padding:11px;border-radius:8px}
+hr{border:0;border-top:1px solid #222;margin:22px 0}
+</style></head>
+<body><div class="c">
+<h2>Atmosphera VPN</h2>
+<p id="s">Загрузка…</p>
+<a class="b" id="go" href="#" style="display:none">📲 Открыть в Happ</a>
+<p class="note" id="hint" style="display:none">Если Happ не открылся сам — нажмите кнопку выше. После открытия выберите сервер «YC Relay (atmo)» и нажмите подключение.</p>
+<div id="fb" style="display:none">
+  <hr>
+  <p class="note">Приложение Happ ещё не установлено? Установите его, затем снова откройте эту ссылку:</p>
+  <div class="stores">
+    <a href="https://apps.apple.com/us/app/happ-proxy-utility/id6504287215">iPhone (App Store)</a>
+    <a href="https://play.google.com/store/apps/details?id=com.happproxy">Android (Google Play)</a>
+    <a href="https://www.happ.su/main">Компьютер</a>
+  </div>
+  <p class="lbl">Или скопируйте ссылку-подписку и добавьте вручную («Добавить из буфера»):</p>
+  <code id="lnk"></code>
+</div>
+<script>
+var q=new URLSearchParams(location.search),to=q.get('to'),sub=q.get('sub');
+var go=document.getElementById('go'),s=document.getElementById('s'),
+    fb=document.getElementById('fb'),lnk=document.getElementById('lnk'),
+    hint=document.getElementById('hint');
+if(sub){lnk.textContent=sub;}
+function arm(u){
+  go.href=u; go.style.display='inline-block'; fb.style.display='block'; hint.style.display='block';
+  s.textContent='Открываю приложение Happ…';
+  // Авто-переход (1-тап): если Happ установлен — откроется сам. Если нет,
+  // браузер покажет ошибку, но ниже уже есть кнопка установки и копия подписки.
+  setTimeout(function(){ location.href=u; }, 500);
+}
+if(to){ arm(to); }
+else if(sub){
+  s.textContent='Готовлю ссылку…';
+  fetch('https://crypto.happ.su/api-v2.php',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({url:sub})})
+  .then(function(r){return r.json();})
+  .then(function(d){ if(d&&d.encrypted_link){ arm(d.encrypted_link); }
+    else{ fb.style.display='block'; s.textContent='Скопируйте ссылку-подписку и добавьте в Happ вручную:'; } })
+  .catch(function(){ fb.style.display='block'; s.textContent='Скопируйте ссылку-подписку и добавьте в Happ вручную:'; });
+}
+else{ s.textContent='Нет ссылки подписки.'; }
+</script>
+</div></body></html>
